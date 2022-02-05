@@ -1,0 +1,60 @@
+languageCode: "en-us"
+baseUrl: ""
+title: "Sometimes I write code"
+theme: "anubis"
+paginate: 10
+disqusShortname: ""
+googleAnalytics: "G-12345"
+enableRobotsTXT: true
+
+menu:
+  main:
+  - identifier: "about"
+    name: "About"
+    url: "/about/"
+    weight: 1
+  - identifier: "tags"
+    name: "Tags"
+    url: "/tags/"
+    weight: 2
+  - identifier: archive
+    name: All Posts
+    title: Archive
+    url: /posts/
+    weight: 0
+
+taxonomies:
+  category: "categories"
+  tag: "tags"
+
+params:
+  author: "Eric Stokes"
+  # email: mail@example.org # used for microformats
+  # avatar: "/images/me.png" # used for microformats
+  description: ""
+  dateFormat: "2006-01-02"
+  paginationSinglePost: true
+  style: dark
+  readMore: true
+  disableSummary: false
+  copyCodeButton: true
+  rssAsSocialIcon: true
+  # utteranc.es support
+  utterancesRepo: ""
+  # isso support
+  isso:
+    enabled: false
+  webmentions:
+    url: https://yourdomain.com/webemntions/receive
+    login: hugo-theme-anubis
+    pingback: true
+  social:
+  - id: github
+    name: FernFerret
+
+markup:
+  highlight:
+    style: dracula
+  goldmark:
+    renderer:
+      unsafe: true # enable raw HTML in Markdown

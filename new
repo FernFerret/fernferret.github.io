@@ -1,0 +1,10 @@
+#!/bin/bash
+name=$(echo "$*" | tr ' ' '-' | tr '[A-Z]' '[a-z]')
+year_month=$(date +%Y/%m)
+
+if [ "$name" == "" ]; then
+  echo "Missing post title!"
+  exit 1
+fi
+
+hugo new --kind post posts/$year_month/$name
