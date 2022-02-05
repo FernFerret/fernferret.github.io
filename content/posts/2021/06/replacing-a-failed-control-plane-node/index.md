@@ -102,7 +102,7 @@ $ kubectl exec -it -n kube-system etcd-$HOST -- \
 
 First let's shutdown `cubert` we don't really need any of the data on it:
 
-```
+```text
 ssh cubert
 sudo shutdown -h now
 ```

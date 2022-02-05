@@ -33,7 +33,7 @@ ETCDCTL=3 etcdctl check perf \
 You'll see the test results start to come across as a progress bar. Here were
 some of my results:
 
-### cubert (EVO 860)
+### cubert (EVO 860) - etcd
 
 ```text
  60 / 60 Boooooooooooooooooo! 100.00% 1m0s
@@ -55,7 +55,7 @@ Stddev too high: 0.886701s
 FAIL
 ```
 
-### igner (Hitachi 5400)
+### igner (Hitachi 5400) - etcd
 
 ```text
  60 / 60 Boooooooooooooooooo! 100.00% 1m0s
@@ -77,7 +77,7 @@ PASS: Stddev is 0.045938s
 PASS
 ```
 
-### larry (Hitachi 5400)
+### larry (Hitachi 5400) - etcd
 
 ```text
  60 / 60 Boooooooooooooooooo! 100.00% 1m0s
@@ -165,7 +165,7 @@ Disk stats (read/write):
 
 These are interesting. `etcd` wants the 99th percentile of the fsync stat to be
 `10ms`... We're at `434ms`. However, the 50th percentile is `11ms` which is 1/4
-of the other 2 servers. This server has an 
+of the other 2 servers. This server has an SSD... so why is it so slow...
 
 ```text
   fsync/fdatasync/sync_file_range:
@@ -479,6 +479,7 @@ SATA Version is:  SATA 2.6, 1.5 Gb/s
 ```
 
 ### walt (EVO 870)
+
 ```text
 $ sudo hdparm -I /dev/sda
 
@@ -626,9 +627,9 @@ disks were the issue.
 Run this on each server:
 
 ```text
-$ mkdir -p /tmp/bench
-$ cd /tmp/bench
-$ sysbench fileio prepare
+mkdir -p /tmp/bench
+cd /tmp/bench
+sysbench fileio prepare
 ```
 
 Now do the benchmark, I'll show a few of the stats:
