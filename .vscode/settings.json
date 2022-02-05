@@ -1,5 +1,3 @@
 {
-    "pasteImage.path": "${projectRoot}/static/images/",
-    "pasteImage.basePath": "${projectRoot}/static",
-    "pasteImage.insertPattern": "${imageSyntaxPrefix}/${imageFilePath}${imageSyntaxSuffix}"
+    "pasteImage.path": "${currentFileDir}/img"
 }
