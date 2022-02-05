@@ -37,7 +37,7 @@ they also mention using their tool `cmctl` to easily do this.
 While I could just grab their `cmctl` and run it blindly, I thought it'd be fun
 to investigate this issue from a pure Kubernetes perspective. What if I needed
 to do this with one of my own CRDs or someone else had a CRD that we needed
-deprecate and they didn't provide a `THINGctl`? 
+deprecate and they didn't provide a `THINGctl`?
 
 I started looking for documents related to `status.storedVersions` since that's
 what my error was and found there's a section specifically on this topic named
@@ -80,8 +80,9 @@ The process is effectively:
 
 The reason this is "broken" is that the new version no longer has `v1alpha2` in
 it, so Kubernetes is trying to protect us by saying "hey man, at some point you
-used `v1alpha2` in your cluster, but you're trying to remove it from the CRD!"
-Thanks [Captain Kube](https://www.cncf.io/phippy/)!
+had `v1alpha2` in your cluster, but you're trying to remove it from the CRD!
+This might mean some of your stuff won't work!" Thanks [Captain
+Kube](https://www.cncf.io/phippy/)!
 
 We can use the `patch` operation combined with `kube proxy` [as stated in the
 docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#upgrade-existing-objects-to-a-new-stored-version)
