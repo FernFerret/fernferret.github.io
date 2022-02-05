@@ -1,5 +1,5 @@
 languageCode: "en-us"
-baseUrl: ""
+baseUrl: "https://fernferret.github.io/"
 title: "Sometimes I write code"
 theme: "anubis"
 paginate: 10
