@@ -10,7 +10,7 @@
 <link rel=alternate type=application/rss+xml href=https://fernferret.github.io/index.xml title="Sometimes I write code">
 <link rel=icon type=image/x-icon href=https://fernferret.github.io/favicon.ico>
 <link rel=apple-touch-icon-precomposed href=https://fernferret.github.io/favicon.png>
-<link rel=stylesheet href=https://fernferret.github.io/css/style.min.74c6bb4ab665b2869d521de4910e2df9ea0ac0187698303cb42f3484e3491dca.css integrity="sha256-dMa7SrZlsoadUh3kkQ4t+eoKwBh2mDA8tC80hONJHco=">
+<link rel=stylesheet href=https://fernferret.github.io/css/style.min.2e211418cd4bfce5d0807e62aa9cdf8a97687f6ecd6d0abcaceb0bb338b78461.css integrity="sha256-LiEUGM1L/OXQgH5iqpzfipdof27NbQq8rOsLszi3hGE=">
 <script src=https://fernferret.github.io/js/script.min.510c781c39dbb21b4c76d85c82e2bdf4689220adbb7cd61e49e9d293e442fb42.js type=text/javascript integrity="sha256-UQx4HDnbshtMdthcguK99GiSIK27fNYeSenSk+RC+0I="></script>
 <meta property="og:title" content="Sometimes I write code">
 <meta property="og:description" content>
@@ -68,49 +68,28 @@
 <article class="post-list h-feed">
 <div class=post-header>
 <header>
-<h1 class="p-name post-title"><a class=u-url href=/posts/2022/02/test-post-please-ignore/>Test Post Please Ignore</a></h1>
+<h1 class="p-name post-title"><a class=u-url href=/posts/2022/02/out-of-date-statefulset-pods/>StatefulSet Updates: Demystifying OnDelete</a></h1>
 </header>
 </div>
 <div class="content post-summary p-summary">
-<p>Just testing to make sure things are working with github.</p>
+I was updating my kubernetes cluster the other week and noticed that there was a chart update for my MongoDB install. I&rsquo;m not sure what prompted me to look, but I noticed that before the update, I was running 2 different minor versions of MongoDB in my replica set (4.4.8 vs 4.4.10).
+This had me a bit concerned until I realized that I&rsquo;d setup the StatefulSet to have an updateStrategy of OnDelete like so:
 </div>
 <div class=read-more>
-<a class=u-url href=/posts/2022/02/test-post-please-ignore/>Read more</a>
+<a class=u-url href=/posts/2022/02/out-of-date-statefulset-pods/>Read more</a>
 </div>
 <div class=post-info>
-<div class="post-date dt-published">2022-02-05</div>
-<a class="post-hidden-url u-url" href=https://fernferret.github.io/posts/2022/02/test-post-please-ignore/>https://fernferret.github.io/posts/2022/02/test-post-please-ignore/</a>
+<div class="post-date dt-published">2022-02-11</div>
+<a class="post-hidden-url u-url" href=https://fernferret.github.io/posts/2022/02/out-of-date-statefulset-pods/>https://fernferret.github.io/posts/2022/02/out-of-date-statefulset-pods/</a>
 <a href=https://fernferret.github.io/ class="p-name p-author post-hidden-author h-card" rel=me>Eric Stokes</a>
 <div class=post-taxonomies>
-</div>
-</div>
-</article>
-<article class="post-list h-feed">
-<div class=post-header>
-<header>
-<h1 class="p-name post-title favorite"><a class=u-url href=/posts/2019/03/markdown-syntax/>Markdown Syntax Guide</a></h1>
-</header>
-</div>
-<div class="content post-summary p-summary">
-<p>This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.</p>
-</div>
-<div class=read-more>
-<a class=u-url href=/posts/2019/03/markdown-syntax/>Read more</a>
-</div>
-<div class=post-info>
-<div class="post-date dt-published">2019-03-11</div>
-<a class="post-hidden-url u-url" href=https://fernferret.github.io/posts/2019/03/markdown-syntax/>https://fernferret.github.io/posts/2019/03/markdown-syntax/</a>
-<a href=https://fernferret.github.io/ class="p-name p-author post-hidden-author h-card" rel=me>Hugo Authors</a>
-<div class=post-taxonomies>
 <ul class=post-categories>
-<li><a href=https://fernferret.github.io/categories/themes/>themes</a></li>
-<li><a href=https://fernferret.github.io/categories/syntax/>syntax</a></li>
+<li><a href=https://fernferret.github.io/categories/kubernetes/>kubernetes</a></li>
 </ul>
 <ul class=post-tags>
-<li><a href=https://fernferret.github.io/tags/markdown/>#markdown</a></li>
-<li><a href=https://fernferret.github.io/tags/css/>#css</a></li>
-<li><a href=https://fernferret.github.io/tags/html/>#html</a></li>
-<li><a href=https://fernferret.github.io/tags/themes/>#themes</a></li>
+<li><a href=https://fernferret.github.io/tags/statefulset/>#statefulset</a></li>
+<li><a href=https://fernferret.github.io/tags/prometheus/>#prometheus</a></li>
+<li><a href=https://fernferret.github.io/tags/grafana/>#grafana</a></li>
 </ul>
 </div>
 </div>

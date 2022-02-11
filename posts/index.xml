@@ -1,251 +1,252 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Sometimes I write code</title><link>https://fernferret.github.io/posts/</link><description>Sometimes I write code (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 05 Feb 2022 12:33:04 +0000</lastBuildDate><atom:link href="https://fernferret.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Test Post Please Ignore</title><link>https://fernferret.github.io/posts/2022/02/test-post-please-ignore/</link><pubDate>Sat, 05 Feb 2022 12:33:04 +0000</pubDate><guid>https://fernferret.github.io/posts/2022/02/test-post-please-ignore/</guid><description>&lt;p>Just testing to make sure things are working with github.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="color:#ff79c6">foo&lt;/span>: bar
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="heres-an-image" >Here&amp;rsquo;s an image?
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Sometimes I write code</title><link>https://fernferret.github.io/posts/</link><description>Sometimes I write code (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 11 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://fernferret.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>StatefulSet Updates: Demystifying OnDelete</title><link>https://fernferret.github.io/posts/2022/02/out-of-date-statefulset-pods/</link><pubDate>Fri, 11 Feb 2022 00:00:00 +0000</pubDate><guid>https://fernferret.github.io/posts/2022/02/out-of-date-statefulset-pods/</guid><description>&lt;p>I was updating my kubernetes cluster the other week and noticed that there was a
+chart update for my MongoDB install. I&amp;rsquo;m not sure what prompted me to look, but
+I noticed that before the update, I was running 2 different minor versions of
+MongoDB in my replica set (4.4.8 vs 4.4.10).&lt;/p>
+&lt;p>This had me a bit concerned until I realized that I&amp;rsquo;d setup the StatefulSet to
+have an &lt;code>updateStrategy&lt;/code> of &lt;strong>OnDelete&lt;/strong> like so:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="color:#ff79c6">apiVersion&lt;/span>: apps/v1
+&lt;span style="color:#ff79c6">kind&lt;/span>: StatefulSet
+&lt;span style="color:#ff79c6">metadata&lt;/span>:
+&lt;span style="color:#ff79c6">name&lt;/span>: mongodb
+&lt;span style="color:#ff79c6">spec&lt;/span>:
+...
+&lt;span style="color:#ff79c6">updateStrategy&lt;/span>:
+&lt;span style="color:#ff79c6">type&lt;/span>: OnDelete
+...
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>I knew from reading the docs on the &lt;a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies">OnDelete
+&lt;code>updateStrategy&lt;/code>&lt;/a>
+that this meant the StatefulSet controller would not automatically update my
+MongoDB software; instead I was responsible for deleting each pod in the set to
+allow me to check each one out before moving on to the next.&lt;/p>
+&lt;p>This is exactly what I wanted for a database like MongoDB, but how did I forget
+to update all of them?! This is what had me worried, so to avoid doing this
+again (and to verify my cluster was fully updated) I decided to have a look at
+my process and figure out how I missed this.&lt;/p>
+&lt;h2 id="how-did-this-happen" >How did this happen
 &lt;span>
-&lt;a href="#heres-an-image">
+&lt;a href="#how-did-this-happen">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h2>&lt;p>&lt;img src="img/2022-02-05-16-08-23.png" alt="A screenshot">&lt;/p></description></item><item><title>Markdown Syntax Guide</title><link>https://fernferret.github.io/posts/2019/03/markdown-syntax/</link><pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate><guid>https://fernferret.github.io/posts/2019/03/markdown-syntax/</guid><description>&lt;p>This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.&lt;/p>
-&lt;h2 id="headings" >Headings
+&lt;/h2>&lt;p>&lt;img src="img/that-happened.gif" alt="That Happened&amp;hellip;">&lt;/p>
+&lt;p>Well&amp;hellip; clearly my trusty sidekick k9s is to blame right? Everything looked
+great in k9s:&lt;/p>
+&lt;p>&lt;img src="img/2022-02-11-09-59-55.png" alt="StatefulSet looks ok">&lt;/p>
+&lt;p>Even the pods look great&lt;/p>
+&lt;p>&lt;img src="img/2022-02-11-09-59-20.png" alt="Pods do too">&lt;/p>
+&lt;p>So from a quick glance it&amp;rsquo;s easy to miss a pod since there&amp;rsquo;s no obvious
+indicator that there&amp;rsquo;s a problem&amp;hellip; and I think this is intentional.&lt;/p>
+&lt;p>There might not be a problem, but things certainly are&amp;rsquo;t all at the same state,
+and not knowing that &lt;strong>is a problem&lt;/strong>.&lt;/p>
+&lt;h2 id="lets-plot-some-things" >Let&amp;rsquo;s plot some things
 &lt;span>
-&lt;a href="#headings">
+&lt;a href="#lets-plot-some-things">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h2>&lt;p>The following HTML &lt;code>&amp;lt;h1&amp;gt;&lt;/code>—&lt;code>&amp;lt;h6&amp;gt;&lt;/code> elements represent six levels of section headings. &lt;code>&amp;lt;h1&amp;gt;&lt;/code> is the highest section level while &lt;code>&amp;lt;h6&amp;gt;&lt;/code> is the lowest.&lt;/p>
-&lt;h1 id="h1" >H1
-&lt;span>
-&lt;a href="#h1">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h1>&lt;h2 id="h2" >H2
-&lt;span>
-&lt;a href="#h2">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h2>&lt;h3 id="h3" >H3
-&lt;span>
-&lt;a href="#h3">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h3>&lt;h4 id="h4" >H4
-&lt;span>
-&lt;a href="#h4">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;h5 id="h5" >H5
-&lt;span>
-&lt;a href="#h5">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h5>&lt;h6 id="h6" >H6
-&lt;span>
-&lt;a href="#h6">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h6>&lt;h2 id="paragraph" >Paragraph
-&lt;span>
-&lt;a href="#paragraph">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h2>&lt;p>Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur? Quianimin porecus evelectur, cum que nis nust voloribus ratem aut omnimi, sitatur? Quiatem. Nam, omnis sum am facea corem alique molestrunt et eos evelece arcillit ut aut eos eos nus, sin conecerem erum fuga. Ri oditatquam, ad quibus unda veliamenimin cusam et facea ipsamus es exerum sitate dolores editium rerore eost, temped molorro ratiae volorro te reribus dolorer sperchicium faceata tiustia prat.&lt;/p>
-&lt;p>Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sapicia is sinveli squiatum, core et que aut hariosam ex eat.&lt;/p>
-&lt;h2 id="blockquotes" >Blockquotes
-&lt;span>
-&lt;a href="#blockquotes">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h2>&lt;p>The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a &lt;code>footer&lt;/code> or &lt;code>cite&lt;/code> element, and optionally with in-line changes such as annotations and abbreviations.&lt;/p>
-&lt;h4 id="blockquote-without-attribution" >Blockquote without attribution
-&lt;span>
-&lt;a href="#blockquote-without-attribution">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;blockquote>
-&lt;p>Tiam, ad mint andaepu dandae nostion secatur sequo quae.
-&lt;strong>Note&lt;/strong> that you can use &lt;em>Markdown syntax&lt;/em> within a blockquote.&lt;/p>
-&lt;/blockquote>
-&lt;h4 id="blockquote-with-attribution" >Blockquote with attribution
-&lt;span>
-&lt;a href="#blockquote-with-attribution">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;blockquote>
-&lt;p>Don&amp;rsquo;t communicate by sharing memory, share memory by communicating.&lt;/p>
-— &lt;cite>Rob Pike&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/cite>&lt;/p>
-&lt;/blockquote>
-&lt;h2 id="tables" >Tables
-&lt;span>
-&lt;a href="#tables">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h2>&lt;p>Tables aren&amp;rsquo;t part of the core Markdown spec, but Hugo supports supports them out-of-the-box.&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Name&lt;/th>
-&lt;th>Age&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>Bob&lt;/td>
-&lt;td>27&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>Alice&lt;/td>
-&lt;td>23&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h4 id="inline-markdown-within-tables" >Inline Markdown within tables
-&lt;span>
-&lt;a href="#inline-markdown-within-tables">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Inline   &lt;/th>
-&lt;th>Markdown   &lt;/th>
-&lt;th>In   &lt;/th>
-&lt;th>Table&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;em>italics&lt;/em>&lt;/td>
-&lt;td>&lt;strong>bold&lt;/strong>&lt;/td>
-&lt;td>&lt;del>strikethrough&lt;/del>   &lt;/td>
-&lt;td>&lt;code>code&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="code-blocks" >Code Blocks
-&lt;span>
-&lt;a href="#code-blocks">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h2>&lt;h4 id="code-block-with-backticks" >Code block with backticks
-&lt;span>
-&lt;a href="#code-block-with-backticks">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-html" data-lang="html">&lt;span style="color:#ff79c6">&amp;lt;!DOCTYPE html&amp;gt;&lt;/span>
-&amp;lt;&lt;span style="color:#ff79c6">html&lt;/span> &lt;span style="color:#50fa7b">lang&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;en&amp;#34;&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">head&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">meta&lt;/span> &lt;span style="color:#50fa7b">charset&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;UTF-8&amp;#34;&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">title&lt;/span>&amp;gt;Example HTML5 Document&amp;lt;/&lt;span style="color:#ff79c6">title&lt;/span>&amp;gt;
-&amp;lt;/&lt;span style="color:#ff79c6">head&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">body&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">p&lt;/span>&amp;gt;Test&amp;lt;/&lt;span style="color:#ff79c6">p&lt;/span>&amp;gt;
-&amp;lt;/&lt;span style="color:#ff79c6">body&lt;/span>&amp;gt;
-&amp;lt;/&lt;span style="color:#ff79c6">html&lt;/span>&amp;gt;
-&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="code-block-indented-with-four-spaces" >Code block indented with four spaces
-&lt;span>
-&lt;a href="#code-block-indented-with-four-spaces">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;pre>&lt;code>&amp;lt;!doctype html&amp;gt;
-&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;
-&amp;lt;head&amp;gt;
-&amp;lt;meta charset=&amp;quot;utf-8&amp;quot;&amp;gt;
-&amp;lt;title&amp;gt;Example HTML5 Document&amp;lt;/title&amp;gt;
-&amp;lt;/head&amp;gt;
-&amp;lt;body&amp;gt;
-&amp;lt;p&amp;gt;Test&amp;lt;/p&amp;gt;
-&amp;lt;/body&amp;gt;
-&amp;lt;/html&amp;gt;
-&lt;/code>&lt;/pre>
-&lt;h4 id="code-block-with-hugos-internal-highlight-shortcode" >Code block with Hugo&amp;rsquo;s internal highlight shortcode
-&lt;span>
-&lt;a href="#code-block-with-hugos-internal-highlight-shortcode">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-html" data-lang="html">&lt;span style="color:#ff79c6">&amp;lt;!DOCTYPE html&amp;gt;&lt;/span>
-&amp;lt;&lt;span style="color:#ff79c6">html&lt;/span> &lt;span style="color:#50fa7b">lang&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;en&amp;#34;&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">head&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">meta&lt;/span> &lt;span style="color:#50fa7b">charset&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;UTF-8&amp;#34;&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">title&lt;/span>&amp;gt;Example HTML5 Document&amp;lt;/&lt;span style="color:#ff79c6">title&lt;/span>&amp;gt;
-&amp;lt;/&lt;span style="color:#ff79c6">head&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">body&lt;/span>&amp;gt;
-&amp;lt;&lt;span style="color:#ff79c6">p&lt;/span>&amp;gt;Test&amp;lt;/&lt;span style="color:#ff79c6">p&lt;/span>&amp;gt;
-&amp;lt;/&lt;span style="color:#ff79c6">body&lt;/span>&amp;gt;
-&amp;lt;/&lt;span style="color:#ff79c6">html&lt;/span>&amp;gt;&lt;/code>&lt;/pre>&lt;/div>
-&lt;h2 id="list-types" >List Types
-&lt;span>
-&lt;a href="#list-types">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h2>&lt;h4 id="ordered-list" >Ordered List
-&lt;span>
-&lt;a href="#ordered-list">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;ol>
-&lt;li>First item&lt;/li>
-&lt;li>Second item&lt;/li>
-&lt;li>Third item&lt;/li>
-&lt;/ol>
-&lt;h4 id="unordered-list" >Unordered List
-&lt;span>
-&lt;a href="#unordered-list">
-&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
-&lt;/a>
-&lt;/span>
-&lt;/h4>&lt;ul>
-&lt;li>List item&lt;/li>
-&lt;li>Another item&lt;/li>
-&lt;li>And another item&lt;/li>
+&lt;/h2>&lt;p>Since I was unable to see the missing update in k9s (obviously) I decided to
+have a look in my Prometheus metrics.&lt;/p>
+&lt;p>I made a small grafana page to analyze my StatefulSets. Here&amp;rsquo;s a capture of it
+when I was performing arbitrary restarts on a few StatefulSets. I focused on 2
+key metrics to understand how they worked:&lt;/p>
+&lt;ul>
+&lt;li>Updated Replicas (&lt;code>kube_statefulset_status_replicas_updated&lt;/code>)&lt;/li>
+&lt;li>Current Replicas (&lt;code>kube_statefulset_status_replicas_current&lt;/code>)&lt;/li>
 &lt;/ul>
-&lt;h4 id="nested-list" >Nested list
+&lt;p>You can &lt;a href="files/dashboard.json">download a copy of the dashboard here&lt;/a>.&lt;/p>
+&lt;p>&lt;img src="img/2022-02-11-01-06-54.png" alt="Grafana Dashboard for StatefulSets">&lt;/p>
+&lt;p>I wanted to show anything here that might indicate there being a problem and how
+long it was a problem so I focused on 2 plots named &amp;ldquo;Out of Date Replicas&amp;rdquo; and
+&amp;ldquo;Non-Current Replicas&amp;rdquo;. The other plots exist only to show other conditions
+(like scaling a StatefulSet) would potentially trigger false positives in a
+potential alert rule.&lt;/p>
+&lt;h2 id="out-of-date-updated-replicas" >Out of Date (Updated) Replicas
 &lt;span>
-&lt;a href="#nested-list">
+&lt;a href="#out-of-date-updated-replicas">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h4>&lt;ul>
-&lt;li>Item&lt;/li>
+&lt;/h2>&lt;p>&lt;img src="img/2022-02-11-10-20-05.png" alt="Out of Date Chart">&lt;/p>
+&lt;p>To generate this plot I used the following query:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-promql" data-lang="promql">&lt;span style="color:#ff79c6">avg&lt;/span>&lt;span style="color:#ff79c6">(&lt;/span>
+&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_replicas&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;} &lt;span style="color:#ff79c6">-&lt;/span>
+&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas_updated&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;}
+&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">by&lt;/span> &lt;span style="color:#ff79c6">(&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">exported_namespace&lt;/span>, &lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">&amp;gt;&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>I opted to title this plot &lt;strong>Out of Date Replicas&lt;/strong>. The goal is to show
+StatefulSets that not have been fully updated by looking at the delta in
+replicas vs &amp;ldquo;Updated Replicas&amp;rdquo;.&lt;/p>
+&lt;p>This matched my expectations looking at the manifests exactly! So&amp;hellip; what about
+Current Replicas? I wanted to plot that too to make sure I didn&amp;rsquo;t miss
+something.&lt;/p>
+&lt;h2 id="current-replicas" >Current Replicas
+&lt;span>
+&lt;a href="#current-replicas">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>&lt;img src="img/2022-02-11-10-20-35.png" alt="Current Replicas Chart">&lt;/p>
+&lt;p>To generate this plot I used the following query:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-promql" data-lang="promql">&lt;span style="color:#ff79c6">avg&lt;/span>&lt;span style="color:#ff79c6">(&lt;/span>
+&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;} &lt;span style="color:#ff79c6">-&lt;/span>
+&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas_current&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;}
+&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">by&lt;/span> &lt;span style="color:#ff79c6">(&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">exported_namespace&lt;/span>, &lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">&amp;gt;&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>This plot was very interesting and honestly triggered the rest of my deep-dive.&lt;/p>
+&lt;p>If we look at the &lt;code>cockroachdb&lt;/code> StatefulSet, it looks nearly the same (although
+there is a quantity difference), but look at &lt;code>vault&lt;/code>!&lt;/p>
+&lt;p>I&amp;rsquo;d just re-installed vault in my test cluster and had restarted it around 00:15
+(the restart can be seen in the above &amp;ldquo;out of date&amp;rdquo; plot!) but once it was
+considered &amp;ldquo;non-current&amp;rdquo; it stayed that way forever.&lt;/p>
+&lt;p>This brings me to MongoDB. Nothing happened to mongo and it was correctly
+updated through all of these captures.&lt;/p>
+&lt;p>My hyphotheisis was that StatefulSets using &lt;strong>OnDelete&lt;/strong> as an &lt;code>updateStrategy&lt;/code>
+would never update the &lt;code>currentRevision&lt;/code> hash, so after the first update/restart
+they&amp;rsquo;d always be out of date. That&amp;rsquo;s certainly what the plots looked like.&lt;/p>
+&lt;h2 id="drawing-conclusions" >Drawing conclusions
+&lt;span>
+&lt;a href="#drawing-conclusions">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>After inspecting these 2 metrics, I had my answer: &lt;code>updateRevision&lt;/code> translates
+to &amp;ldquo;number of outdated pods&amp;rdquo;. It shows the total number of non-current pods in a
+StatefulSet.&lt;/p>
+&lt;p>I could have stopped there but then that would have left me wondering: what does
+&lt;code>currentRevsion&lt;/code> do?&lt;/p>
+&lt;p>I dove into &lt;a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/controller/statefulset/stateful_set_control.go">the &lt;code>stateful_set_control.go&lt;/code>
+code&lt;/a>
+and ran a few test to confirm.&lt;/p>
+&lt;h3 id="how-statefulsets-normally-work" >How StatefulSets (normally) work
+&lt;span>
+&lt;a href="#how-statefulsets-normally-work">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>Kubernetes uses 2 variables to control rolling updates of StatefulSets:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>currentRevision&lt;/code> is a hash of the latest complete update (all replicas were
+updated)&lt;/li>
+&lt;li>&lt;code>updateRevision&lt;/code> is a hash of the desired update&lt;/li>
 &lt;/ul>
-&lt;ol>
-&lt;li>First Sub-item&lt;/li>
-&lt;li>Second Sub-item&lt;/li>
-&lt;/ol>
-&lt;h2 id="other-elements--abbr-sub-sup-kbd-mark" >Other Elements — abbr, sub, sup, kbd, mark
+&lt;p>Each pod has a label that contains the revision hash it was generated from
+called the &lt;code>controller-revision-hash&lt;/code>. Since pods are immutable, this hash will
+never change so Kubernetes can identify pods that are out of date easily.&lt;/p>
+&lt;p>Given the previous information, we can state:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>updatedReplicas&lt;/code>: The number of replicas that match the latest StatefulSet
+revision.&lt;/li>
+&lt;li>&lt;code>currentReplicas&lt;/code>: The number of replicas that match the latest fully complete
+StatefulSet update&lt;/li>
+&lt;/ul>
+&lt;p>What this means is that &lt;code>currentReplicas&lt;/code> only applies to StatefulSets not using
+an &lt;strong>OnDelete&lt;/strong> &lt;code>updateStrategy&lt;/code>.&lt;/p>
+&lt;h3 id="a-brief-look-at-rollingupdate" >A brief look at RollingUpdate
 &lt;span>
-&lt;a href="#other-elements--abbr-sub-sup-kbd-mark">
+&lt;a href="#a-brief-look-at-rollingupdate">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h2>&lt;p>&lt;abbr title="Graphics Interchange Format">GIF&lt;/abbr> is a bitmap image format.&lt;/p>
-&lt;p>H&lt;sub>2&lt;/sub>O&lt;/p>
-&lt;p>X&lt;sup>n&lt;/sup> + Y&lt;sup>n&lt;/sup> = Z&lt;sup>n&lt;/sup>&lt;/p>
-&lt;p>Press &lt;kbd>&lt;kbd>CTRL&lt;/kbd>+&lt;kbd>ALT&lt;/kbd>+&lt;kbd>Delete&lt;/kbd>&lt;/kbd> to end the session.&lt;/p>
-&lt;p>Most &lt;mark>salamanders&lt;/mark> are nocturnal, and hunt for insects, worms, and other small creatures.&lt;/p>
-&lt;section class="footnotes" role="doc-endnotes">
-&lt;hr>
-&lt;ol>
-&lt;li id="fn:1" role="doc-endnote">
-&lt;p>The above quote is excerpted from Rob Pike&amp;rsquo;s &lt;a href="https://www.youtube.com/watch?v=PAAkCSZUG1c">talk&lt;/a> during Gopherfest, November 18, 2015.&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
-&lt;/li>
-&lt;/ol>
-&lt;/section></description></item></channel></rss>
+&lt;/h3>&lt;p>Reading the source is all well and good but I wanted to make sure things worked
+how I thought they should, so I grabbed a StatefulSet using &lt;strong>OnUpdate&lt;/strong> and did
+a few restarts.&lt;/p>
+&lt;p>Let&amp;rsquo;s look at my CockroachDB instance. It&amp;rsquo;s steady state right now, all pods are
+good to go and they&amp;rsquo;re all updated to the correct revision. We&amp;rsquo;ll also note that
+the &lt;code>currentRevision&lt;/code> and &lt;code>updateRevision&lt;/code> &lt;strong>are identical right now&lt;/strong>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+cockroachdb-0 1/1 Running 0 56s cockroachdb-7d6b9f6cdd
+cockroachdb-1 1/1 Running 0 89s cockroachdb-7d6b9f6cdd
+cockroachdb-2 1/1 Running 0 111s cockroachdb-7d6b9f6cdd
+cockroachdb-3 1/1 Running 0 2m10s cockroachdb-7d6b9f6cdd
+$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
+collisionCount: 0
+currentReplicas: 4
+currentRevision: cockroachdb-7d6b9f6cdd
+observedGeneration: 11
+readyReplicas: 4
+replicas: 4
+updateRevision: cockroachdb-7d6b9f6cdd
+updatedReplicas: 4
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s issue an update (via &lt;code>kubectl rollout restart&lt;/code>). We can see
+&lt;code>cockroachdb-3&lt;/code> get recreated and get a new controller-revision-hash (that
+matches the &lt;code>updateRevision&lt;/code>). The status updates to show &lt;code>currentReplicas=3&lt;/code>
+and &lt;code>updatedReplicas=1&lt;/code>. So what the &lt;code>currentReplicas&lt;/code> metric is really telling
+us is (almost) how many &amp;ldquo;non-updated&amp;rdquo; replicas there are. In the next step we&amp;rsquo;ll
+see why this isn&amp;rsquo;t exactly true.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+cockroachdb-0 1/1 Running 0 2m3s cockroachdb-7d6b9f6cdd
+cockroachdb-1 1/1 Running 0 2m36s cockroachdb-7d6b9f6cdd
+cockroachdb-2 1/1 Running 0 2m58s cockroachdb-7d6b9f6cdd
+cockroachdb-3 0/1 Running 0 7s cockroachdb-75d7c744c8
+$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
+collisionCount: 0
+currentReplicas: 3
+currentRevision: cockroachdb-7d6b9f6cdd
+observedGeneration: 12
+readyReplicas: 3
+replicas: 4
+updateRevision: cockroachdb-75d7c744c8
+updatedReplicas: 1
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>A little time goes by and the StatefulSet controller has updated 3 of our pods.
+At this point we&amp;rsquo;ll issue another restart (before the StatefulSet has fully
+updated).&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+cockroachdb-0 1/1 Running 0 3m21s cockroachdb-7d6b9f6cdd
+cockroachdb-1 0/1 Running 0 4s cockroachdb-75d7c744c8
+cockroachdb-2 1/1 Running 0 48s cockroachdb-75d7c744c8
+cockroachdb-3 1/1 Running 0 85s cockroachdb-75d7c744c8
+$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
+collisionCount: 0
+currentReplicas: 1
+currentRevision: cockroachdb-7d6b9f6cdd
+observedGeneration: 12
+readyReplicas: 3
+replicas: 4
+updateRevision: cockroachdb-75d7c744c8
+updatedReplicas: 3
+$ kubectl rollout restart statefulset/cockroachdb
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Running our status commands again, we can finally see something a bit unique:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>currentReplicas=1&lt;/code> (cockroachdb-0)&lt;/li>
+&lt;li>&lt;code>readyReplicas=1&lt;/code> (cockroachdb-0, cockroachdb-2)&lt;/li>
+&lt;li>&lt;code>updatedReplicas=1&lt;/code> (cockroachdb-3)&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+cockroachdb-0 1/1 Running 0 3m40s cockroachdb-7d6b9f6cdd
+cockroachdb-1 0/1 Running 0 23s cockroachdb-75d7c744c8
+cockroachdb-2 1/1 Running 0 67s cockroachdb-75d7c744c8
+cockroachdb-3 0/1 Running 0 4s cockroachdb-66f7ccb4f8
+kubectl get statefulset cockroachdb -o yaml | yq e .status -
+collisionCount: 0
+currentReplicas: 1
+currentRevision: cockroachdb-7d6b9f6cdd
+observedGeneration: 13
+readyReplicas: 2
+replicas: 4
+updateRevision: cockroachdb-66f7ccb4f8
+updatedReplicas: 1
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>This finally gives us the confirmation I was looking for:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>currentReplicas&lt;/code> is the number of replicas that match that &lt;strong>last&lt;/strong> fully
+updated statefulset (this is not particularly useful for me)&lt;/li>
+&lt;li>&lt;code>updatedReplicas&lt;/code> is the number of replicas that match the &lt;strong>latest&lt;/strong>
+revision of the statefulset (this is not particularly useful for me)&lt;/li>
+&lt;/ul>
+&lt;p>Every restart/change to the statefulset, Kubernetes will generate a new
+&lt;code>updateRevision&lt;/code> and wait for the StatefulSet controller to bring all pods to
+that revision. the &lt;code>currentRevision&lt;/code> as shown by the code is just a way to track
+where we started.&lt;/p>
+&lt;h2 id="wrap-it-up" >Wrap it up
+&lt;span>
+&lt;a href="#wrap-it-up">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>I feel like there&amp;rsquo;s a lot more to &lt;strong>every&lt;/strong> aspect of Kubernetes than meets the
+eye. Things like this update quirk are interesting because what &amp;ldquo;unhealthy&amp;rdquo;
+means is different to different teams.&lt;/p>
+&lt;p>Is out-of-date unhealthy? Well, it depends. To me, it&amp;rsquo;s a casual problem, one
+that needs to be looked at, but nothing&amp;rsquo;s on fire so I guess it&amp;rsquo;s time to grab a
+coffee.&lt;/p></description></item></channel></rss>
