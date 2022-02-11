@@ -1,6 +1,10 @@
 {
     "pasteImage.path": "${currentFileDir}/img",
     "cSpell.words": [
-        "Kubernetes"
+        "Grafana",
+        "kube",
+        "Kubernetes",
+        "promql",
+        "statefulset"
     ]
 }
