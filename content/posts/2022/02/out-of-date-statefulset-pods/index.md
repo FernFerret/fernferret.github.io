@@ -1,7 +1,7 @@
 ---
 title: "StatefulSet Updates: Demystifying OnDelete"
 date: 2022-02-11
-draft: true
+draft: false
 tags:
   - statefulset
   - prometheus
