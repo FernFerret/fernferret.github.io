@@ -1,7 +1,7 @@
 ---
 title: "Upgrading CRDs in Kubernetes"
 date: 2022-02-05T15:22:47Z
-draft: true
+draft: false
 tags:
   - helm
   - crd
@@ -68,14 +68,6 @@ CRD installed. This does not mean that I've had instances of each of these, just
 that the CRD definition existed at each of these API versions. For my cluster
 this means I was not very good at updating Cert Manager 😞.
 
-The process is effectively:
-
-* verify that we don't have any more of the old APIs
-  * this verification should happen in my repo of manifests as k8s will
-    translate versions as I pull them out
-* patch the status to remove the clusters' memory of them
-* upgrade the CRD spec to a version that removes the deprecated versions
-
 ## Fixing our CRD
 
 The reason this is "broken" is that the new version no longer has `v1alpha2` in
@@ -83,6 +75,15 @@ it, so Kubernetes is trying to protect us by saying "hey man, at some point you
 had `v1alpha2` in your cluster, but you're trying to remove it from the CRD!
 This might mean some of your stuff won't work!" Thanks [Captain
 Kube](https://www.cncf.io/phippy/)!
+
+The process is effectively:
+
+* verify that we don't have any more of the old Custom Resources
+  * I performed this validation at the repo level
+  * [kubent](https://github.com/doitintl/kube-no-trouble#arguments) is a great
+    tool for  this and you can use it with CRDs!
+* patch the status to remove the clusters' memory of them
+* upgrade the CRD spec to a version that removes the deprecated versions
 
 We can use the `patch` operation combined with `kube proxy` [as stated in the
 docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#upgrade-existing-objects-to-a-new-stored-version)
