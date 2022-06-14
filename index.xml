@@ -4,16 +4,16 @@ I noticed that before the update, I was running 2 different minor versions of
 MongoDB in my replica set (4.4.8 vs 4.4.10).&lt;/p>
 &lt;p>This had me a bit concerned until I realized that I&amp;rsquo;d setup the StatefulSet to
 have an &lt;code>updateStrategy&lt;/code> of &lt;strong>OnDelete&lt;/strong> like so:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="color:#ff79c6">apiVersion&lt;/span>: apps/v1
-&lt;span style="color:#ff79c6">kind&lt;/span>: StatefulSet
-&lt;span style="color:#ff79c6">metadata&lt;/span>:
-&lt;span style="color:#ff79c6">name&lt;/span>: mongodb
-&lt;span style="color:#ff79c6">spec&lt;/span>:
-...
-&lt;span style="color:#ff79c6">updateStrategy&lt;/span>:
-&lt;span style="color:#ff79c6">type&lt;/span>: OnDelete
-...
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>I knew from reading the docs on the &lt;a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies">OnDelete
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">apiVersion&lt;/span>: apps/v1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">kind&lt;/span>: StatefulSet
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: mongodb
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">updateStrategy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">type&lt;/span>: OnDelete
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>I knew from reading the docs on the &lt;a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies">OnDelete
 &lt;code>updateStrategy&lt;/code>&lt;/a>
 that this meant the StatefulSet controller would not automatically update my
 MongoDB software; instead I was responsible for deleting each pod in the set to
@@ -28,7 +28,7 @@ my process and figure out how I missed this.&lt;/p>
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h2>&lt;p>&lt;img src="img/that-happened.gif" alt="That Happened&amp;hellip;">&lt;/p>
+&lt;/h2>&lt;p>&lt;img src="img/that-happened.gif" alt="That Happened&amp;amp;hellip;">&lt;/p>
 &lt;p>Well&amp;hellip; clearly my trusty sidekick k9s is to blame right? Everything looked
 great in k9s:&lt;/p>
 &lt;p>&lt;img src="img/2022-02-11-09-59-55.png" alt="StatefulSet looks ok">&lt;/p>
@@ -68,11 +68,11 @@ potential alert rule.&lt;/p>
 &lt;/span>
 &lt;/h2>&lt;p>&lt;img src="img/2022-02-11-10-20-05.png" alt="Out of Date Chart">&lt;/p>
 &lt;p>To generate this plot I used the following query:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-promql" data-lang="promql">&lt;span style="color:#ff79c6">avg&lt;/span>&lt;span style="color:#ff79c6">(&lt;/span>
-&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_replicas&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;} &lt;span style="color:#ff79c6">-&lt;/span>
-&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas_updated&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;}
-&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">by&lt;/span> &lt;span style="color:#ff79c6">(&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">exported_namespace&lt;/span>, &lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">&amp;gt;&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>I opted to title this plot &lt;strong>Out of Date Replicas&lt;/strong>. The goal is to show
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-promql" data-lang="promql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">avg&lt;/span>&lt;span style="color:#ff79c6">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_replicas&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;} &lt;span style="color:#ff79c6">-&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas_updated&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">by&lt;/span> &lt;span style="color:#ff79c6">(&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">exported_namespace&lt;/span>, &lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">&amp;gt;&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>I opted to title this plot &lt;strong>Out of Date Replicas&lt;/strong>. The goal is to show
 StatefulSets that not have been fully updated by looking at the delta in
 replicas vs &amp;ldquo;Updated Replicas&amp;rdquo;.&lt;/p>
 &lt;p>This matched my expectations looking at the manifests exactly! So&amp;hellip; what about
@@ -86,11 +86,11 @@ something.&lt;/p>
 &lt;/span>
 &lt;/h2>&lt;p>&lt;img src="img/2022-02-11-10-20-35.png" alt="Current Replicas Chart">&lt;/p>
 &lt;p>To generate this plot I used the following query:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-promql" data-lang="promql">&lt;span style="color:#ff79c6">avg&lt;/span>&lt;span style="color:#ff79c6">(&lt;/span>
-&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;} &lt;span style="color:#ff79c6">-&lt;/span>
-&lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas_current&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;}
-&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">by&lt;/span> &lt;span style="color:#ff79c6">(&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">exported_namespace&lt;/span>, &lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">&amp;gt;&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>This plot was very interesting and honestly triggered the rest of my deep-dive.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-promql" data-lang="promql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">avg&lt;/span>&lt;span style="color:#ff79c6">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;} &lt;span style="color:#ff79c6">-&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#8be9fd;font-style:italic">kube_statefulset_status_replicas_current&lt;/span>{&lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">=~&lt;/span>&amp;#34;&lt;span style="color:#f1fa8c">$statefulset&lt;/span>&amp;#34;}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">by&lt;/span> &lt;span style="color:#ff79c6">(&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">exported_namespace&lt;/span>, &lt;span style="color:#8be9fd;font-style:italic">statefulset&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span> &lt;span style="color:#ff79c6">&amp;gt;&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This plot was very interesting and honestly triggered the rest of my deep-dive.&lt;/p>
 &lt;p>If we look at the &lt;code>cockroachdb&lt;/code> StatefulSet, it looks nearly the same (although
 there is a quantity difference), but look at &lt;code>vault&lt;/code>!&lt;/p>
 &lt;p>I&amp;rsquo;d just re-installed vault in my test cluster and had restarted it around 00:15
@@ -151,83 +151,88 @@ a few restarts.&lt;/p>
 &lt;p>Let&amp;rsquo;s look at my CockroachDB instance. It&amp;rsquo;s steady state right now, all pods are
 good to go and they&amp;rsquo;re all updated to the correct revision. We&amp;rsquo;ll also note that
 the &lt;code>currentRevision&lt;/code> and &lt;code>updateRevision&lt;/code> &lt;strong>are identical right now&lt;/strong>.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
-NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
-cockroachdb-0 1/1 Running 0 56s cockroachdb-7d6b9f6cdd
-cockroachdb-1 1/1 Running 0 89s cockroachdb-7d6b9f6cdd
-cockroachdb-2 1/1 Running 0 111s cockroachdb-7d6b9f6cdd
-cockroachdb-3 1/1 Running 0 2m10s cockroachdb-7d6b9f6cdd
-$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
-collisionCount: 0
-currentReplicas: 4
-currentRevision: cockroachdb-7d6b9f6cdd
-observedGeneration: 11
-readyReplicas: 4
-replicas: 4
-updateRevision: cockroachdb-7d6b9f6cdd
-updatedReplicas: 4
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s issue an update (via &lt;code>kubectl rollout restart&lt;/code>). We can see
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-0 1/1 Running 0 56s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-1 1/1 Running 0 89s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-2 1/1 Running 0 111s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-3 1/1 Running 0 2m10s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>collisionCount: 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentReplicas: 4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentRevision: cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>observedGeneration: 11
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>readyReplicas: 4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>replicas: 4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updateRevision: cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updatedReplicas: 4
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s issue an update (via &lt;code>kubectl rollout restart&lt;/code>). We can see
 &lt;code>cockroachdb-3&lt;/code> get recreated and get a new controller-revision-hash (that
 matches the &lt;code>updateRevision&lt;/code>). The status updates to show &lt;code>currentReplicas=3&lt;/code>
 and &lt;code>updatedReplicas=1&lt;/code>. So what the &lt;code>currentReplicas&lt;/code> metric is really telling
 us is (almost) how many &amp;ldquo;non-updated&amp;rdquo; replicas there are. In the next step we&amp;rsquo;ll
 see why this isn&amp;rsquo;t exactly true.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
-NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
-cockroachdb-0 1/1 Running 0 2m3s cockroachdb-7d6b9f6cdd
-cockroachdb-1 1/1 Running 0 2m36s cockroachdb-7d6b9f6cdd
-cockroachdb-2 1/1 Running 0 2m58s cockroachdb-7d6b9f6cdd
-cockroachdb-3 0/1 Running 0 7s cockroachdb-75d7c744c8
-$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
-collisionCount: 0
-currentReplicas: 3
-currentRevision: cockroachdb-7d6b9f6cdd
-observedGeneration: 12
-readyReplicas: 3
-replicas: 4
-updateRevision: cockroachdb-75d7c744c8
-updatedReplicas: 1
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>A little time goes by and the StatefulSet controller has updated 3 of our pods.
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-0 1/1 Running 0 2m3s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-1 1/1 Running 0 2m36s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-2 1/1 Running 0 2m58s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-3 0/1 Running 0 7s cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>collisionCount: 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentReplicas: 3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentRevision: cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>observedGeneration: 12
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>readyReplicas: 3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>replicas: 4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updateRevision: cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updatedReplicas: 1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>A little time goes by and the StatefulSet controller has updated 3 of our pods.
 At this point we&amp;rsquo;ll issue another restart (before the StatefulSet has fully
 updated).&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
-NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
-cockroachdb-0 1/1 Running 0 3m21s cockroachdb-7d6b9f6cdd
-cockroachdb-1 0/1 Running 0 4s cockroachdb-75d7c744c8
-cockroachdb-2 1/1 Running 0 48s cockroachdb-75d7c744c8
-cockroachdb-3 1/1 Running 0 85s cockroachdb-75d7c744c8
-$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
-collisionCount: 0
-currentReplicas: 1
-currentRevision: cockroachdb-7d6b9f6cdd
-observedGeneration: 12
-readyReplicas: 3
-replicas: 4
-updateRevision: cockroachdb-75d7c744c8
-updatedReplicas: 3
-$ kubectl rollout restart statefulset/cockroachdb
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>Running our status commands again, we can finally see something a bit unique:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>$ kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-0 1/1 Running 0 3m21s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-1 0/1 Running 0 4s cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-2 1/1 Running 0 48s cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-3 1/1 Running 0 85s cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ kubectl get statefulset cockroachdb -o yaml | yq e .status -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>collisionCount: 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentReplicas: 1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentRevision: cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>observedGeneration: 12
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>readyReplicas: 3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>replicas: 4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updateRevision: cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updatedReplicas: 3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ kubectl rollout restart statefulset/cockroachdb
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Running our status commands again, we can finally see something a bit unique:&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>currentReplicas=1&lt;/code> (cockroachdb-0)&lt;/li>
 &lt;li>&lt;code>readyReplicas=1&lt;/code> (cockroachdb-0, cockroachdb-2)&lt;/li>
 &lt;li>&lt;code>updatedReplicas=1&lt;/code> (cockroachdb-3)&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-text" data-lang="text">kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
-NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
-cockroachdb-0 1/1 Running 0 3m40s cockroachdb-7d6b9f6cdd
-cockroachdb-1 0/1 Running 0 23s cockroachdb-75d7c744c8
-cockroachdb-2 1/1 Running 0 67s cockroachdb-75d7c744c8
-cockroachdb-3 0/1 Running 0 4s cockroachdb-66f7ccb4f8
-kubectl get statefulset cockroachdb -o yaml | yq e .status -
-collisionCount: 0
-currentReplicas: 1
-currentRevision: cockroachdb-7d6b9f6cdd
-observedGeneration: 13
-readyReplicas: 2
-replicas: 4
-updateRevision: cockroachdb-66f7ccb4f8
-updatedReplicas: 1
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>This finally gives us the confirmation I was looking for:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl get pods -n stokesnet -l app.kubernetes.io/name=cockroachdb -L controller-revision-hash
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE CONTROLLER-REVISION-HASH
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-0 1/1 Running 0 3m40s cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-1 0/1 Running 0 23s cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-2 1/1 Running 0 67s cockroachdb-75d7c744c8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cockroachdb-3 0/1 Running 0 4s cockroachdb-66f7ccb4f8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get statefulset cockroachdb -o yaml | yq e .status -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>collisionCount: 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentReplicas: 1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>currentRevision: cockroachdb-7d6b9f6cdd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>observedGeneration: 13
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>readyReplicas: 2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>replicas: 4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updateRevision: cockroachdb-66f7ccb4f8
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>updatedReplicas: 1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This finally gives us the confirmation I was looking for:&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>currentReplicas&lt;/code> is the number of replicas that match that &lt;strong>last&lt;/strong> fully
 updated statefulset (this is not particularly useful for me)&lt;/li>
@@ -249,4 +254,91 @@ eye. Things like this update quirk are interesting because what &amp;ldquo;unhea
 means is different to different teams.&lt;/p>
 &lt;p>Is out-of-date unhealthy? Well, it depends. To me, it&amp;rsquo;s a casual problem, one
 that needs to be looked at, but nothing&amp;rsquo;s on fire so I guess it&amp;rsquo;s time to grab a
-coffee.&lt;/p></description></item></channel></rss>
+coffee.&lt;/p></description></item><item><title>Upgrading CRDs in Kubernetes</title><link>https://fernferret.github.io/posts/2022/02/upgrading-crds-in-kubernetes/</link><pubDate>Sat, 05 Feb 2022 15:22:47 +0000</pubDate><guid>https://fernferret.github.io/posts/2022/02/upgrading-crds-in-kubernetes/</guid><description>&lt;p>Today, I was performing a routine update in my Kubernetes cluster and I
+encountered a unique error in ArgoCD. I thought the update to &lt;a href="https://cert-manager.io/docs/">Cert
+Manager&lt;/a>, from &lt;code>1.6.1&lt;/code> to &lt;code>1.7.1&lt;/code> would be a
+simple one due to SemVer, but a CRD issue stopped me from upgrading.&lt;/p>
+&lt;p>That issue, while easily fixable if I&amp;rsquo;d just read the release notes, led me to
+an interesting journey about CRD deprecations.&lt;/p>
+&lt;h2 id="the-error" >The Error
+&lt;span>
+&lt;a href="#the-error">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>When I tried to sync, ArgoCD spat out a scary looking error message about all
+the CRDs:&lt;/p>
+&lt;p>&lt;img src="img/2022-02-05-16-19-12.png" alt="Failed to sync CRDs">&lt;/p>
+&lt;p>I&amp;rsquo;d missed the note on the &lt;a href="https://artifacthub.io/packages/helm/cert-manager/cert-manager#upgrading-the-chart">ArtifactHub
+page&lt;/a>
+stating that I should check the release notes for &lt;a href="https://github.com/cert-manager/cert-manager/releases/tag/v1.7.0">Cert
+Manager&lt;/a>.
+Turns out, they&amp;rsquo;d removed a bunch of old CRD versions in &lt;code>1.7.0&lt;/code>. That&amp;rsquo;s cool,
+they also mention using their tool &lt;code>cmctl&lt;/code> to easily do this.&lt;/p>
+&lt;p>While I could just grab their &lt;code>cmctl&lt;/code> and run it blindly, I thought it&amp;rsquo;d be fun
+to investigate this issue from a pure Kubernetes perspective. What if I needed
+to do this with one of my own CRDs or someone else had a CRD that we needed
+deprecate and they didn&amp;rsquo;t provide a &lt;code>THINGctl&lt;/code>?&lt;/p>
+&lt;p>I started looking for documents related to &lt;code>status.storedVersions&lt;/code> since that&amp;rsquo;s
+what my error was and found there&amp;rsquo;s a section specifically on this topic named
+&lt;a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#upgrade-existing-objects-to-a-new-stored-version">upgrading existing object to a new stored
+version&lt;/a>.&lt;/p>
+&lt;h2 id="what-is-storedversions" >What is &lt;code>storedVersions&lt;/code>
+&lt;span>
+&lt;a href="#what-is-storedversions">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The API documents states that &lt;code>storedVersions&lt;/code>:&lt;/p>
+&lt;blockquote>
+&lt;p>The API server records each version which has ever been marked as the storage
+version in the status field storedVersions. Objects may have been persisted at
+any version that has ever been designated as a storage version. No objects can
+exist in storage at a version that has never been a storage version.&lt;/p>
+&lt;/blockquote>
+&lt;p>Let&amp;rsquo;s have a look at &lt;code>status.storedVersions&lt;/code> in my &lt;code>ClusterIssuers&lt;/code> CRD, since I
+know I have one and at one point it was &lt;code>v1alpha2&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl get crd clusterissuers.cert-manager.io -o yaml | \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> yq e &amp;#39;.status.storedVersions&amp;#39; -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- v1alpha2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- v1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This means that at some point I&amp;rsquo;ve had a &lt;code>v1alpha2&lt;/code> and a &lt;code>v1&lt;/code> version of this
+CRD installed. This does not mean that I&amp;rsquo;ve had instances of each of these, just
+that the CRD definition existed at each of these API versions. For my cluster
+this means I was not very good at updating Cert Manager 😞.&lt;/p>
+&lt;h2 id="fixing-our-crd" >Fixing our CRD
+&lt;span>
+&lt;a href="#fixing-our-crd">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The reason this is &amp;ldquo;broken&amp;rdquo; is that the new version no longer has &lt;code>v1alpha2&lt;/code> in
+it, so Kubernetes is trying to protect us by saying &amp;ldquo;hey man, at some point you
+had &lt;code>v1alpha2&lt;/code> in your cluster, but you&amp;rsquo;re trying to remove it from the CRD!
+This might mean some of your stuff won&amp;rsquo;t work!&amp;rdquo; Thanks &lt;a href="https://www.cncf.io/phippy/">Captain
+Kube&lt;/a>!&lt;/p>
+&lt;p>The process is effectively:&lt;/p>
+&lt;ul>
+&lt;li>verify that we don&amp;rsquo;t have any more of the old Custom Resources
+&lt;ul>
+&lt;li>I performed this validation at the repo level&lt;/li>
+&lt;li>&lt;a href="https://github.com/doitintl/kube-no-trouble#arguments">kubent&lt;/a> is a great
+tool for this and you can use it with CRDs!&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>patch the status to remove the clusters&amp;rsquo; memory of them&lt;/li>
+&lt;li>upgrade the CRD spec to a version that removes the deprecated versions&lt;/li>
+&lt;/ul>
+&lt;p>We can use the &lt;code>patch&lt;/code> operation combined with &lt;code>kube proxy&lt;/code> &lt;a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#upgrade-existing-objects-to-a-new-stored-version">as stated in the
+docs&lt;/a>
+to remove the &lt;code>v1alpha2&lt;/code> CRD &lt;code>storedVersion&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl proxy &amp;amp;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl --header &amp;#34;Content-Type: application/json-patch+json&amp;#34; \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --request PATCH http://localhost:8001/apis/apiextensions.k8s.io/v1/customresourcedefinitions/clusterissuers.cert-manager.io/status \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --data &amp;#39;[{&amp;#34;op&amp;#34;: &amp;#34;replace&amp;#34;, &amp;#34;path&amp;#34;: &amp;#34;/status/storedVersions&amp;#34;, &amp;#34;value&amp;#34;:[&amp;#34;v1&amp;#34;]}]&amp;#39;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This will return the CRD and you should be able to verify it no longer has the
+old &lt;code>storedVersion&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl get crd clusterissuers.cert-manager.io -o yaml | \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> yq e &amp;#39;.status.storedVersions&amp;#39; -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- v1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Awesome, we&amp;rsquo;re ready to rock now and can go sync ArgoCD!&lt;/p></description></item></channel></rss>

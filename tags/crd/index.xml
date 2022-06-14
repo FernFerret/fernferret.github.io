@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>crd on Sometimes I write code</title><link>https://fernferret.github.io/tags/crd/</link><description>Sometimes I write code (crd)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 05 Feb 2022 15:22:47 +0000</lastBuildDate><atom:link href="https://fernferret.github.io/tags/crd/index.xml" rel="self" type="application/rss+xml"/><item><title>Upgrading CRDs in Kubernetes</title><link>https://fernferret.github.io/posts/2022/02/upgrading-crds-in-kubernetes/</link><pubDate>Sat, 05 Feb 2022 15:22:47 +0000</pubDate><guid>https://fernferret.github.io/posts/2022/02/upgrading-crds-in-kubernetes/</guid><description>&lt;p>Today, I was performing a routine update in my Kubernetes cluster and I
+encountered a unique error in ArgoCD. I thought the update to &lt;a href="https://cert-manager.io/docs/">Cert
+Manager&lt;/a>, from &lt;code>1.6.1&lt;/code> to &lt;code>1.7.1&lt;/code> would be a
+simple one due to SemVer, but a CRD issue stopped me from upgrading.&lt;/p>
+&lt;p>That issue, while easily fixable if I&amp;rsquo;d just read the release notes, led me to
+an interesting journey about CRD deprecations.&lt;/p>
+&lt;h2 id="the-error" >The Error
+&lt;span>
+&lt;a href="#the-error">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>When I tried to sync, ArgoCD spat out a scary looking error message about all
+the CRDs:&lt;/p>
+&lt;p>&lt;img src="img/2022-02-05-16-19-12.png" alt="Failed to sync CRDs">&lt;/p>
+&lt;p>I&amp;rsquo;d missed the note on the &lt;a href="https://artifacthub.io/packages/helm/cert-manager/cert-manager#upgrading-the-chart">ArtifactHub
+page&lt;/a>
+stating that I should check the release notes for &lt;a href="https://github.com/cert-manager/cert-manager/releases/tag/v1.7.0">Cert
+Manager&lt;/a>.
+Turns out, they&amp;rsquo;d removed a bunch of old CRD versions in &lt;code>1.7.0&lt;/code>. That&amp;rsquo;s cool,
+they also mention using their tool &lt;code>cmctl&lt;/code> to easily do this.&lt;/p>
+&lt;p>While I could just grab their &lt;code>cmctl&lt;/code> and run it blindly, I thought it&amp;rsquo;d be fun
+to investigate this issue from a pure Kubernetes perspective. What if I needed
+to do this with one of my own CRDs or someone else had a CRD that we needed
+deprecate and they didn&amp;rsquo;t provide a &lt;code>THINGctl&lt;/code>?&lt;/p>
+&lt;p>I started looking for documents related to &lt;code>status.storedVersions&lt;/code> since that&amp;rsquo;s
+what my error was and found there&amp;rsquo;s a section specifically on this topic named
+&lt;a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#upgrade-existing-objects-to-a-new-stored-version">upgrading existing object to a new stored
+version&lt;/a>.&lt;/p>
+&lt;h2 id="what-is-storedversions" >What is &lt;code>storedVersions&lt;/code>
+&lt;span>
+&lt;a href="#what-is-storedversions">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The API documents states that &lt;code>storedVersions&lt;/code>:&lt;/p>
+&lt;blockquote>
+&lt;p>The API server records each version which has ever been marked as the storage
+version in the status field storedVersions. Objects may have been persisted at
+any version that has ever been designated as a storage version. No objects can
+exist in storage at a version that has never been a storage version.&lt;/p>
+&lt;/blockquote>
+&lt;p>Let&amp;rsquo;s have a look at &lt;code>status.storedVersions&lt;/code> in my &lt;code>ClusterIssuers&lt;/code> CRD, since I
+know I have one and at one point it was &lt;code>v1alpha2&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl get crd clusterissuers.cert-manager.io -o yaml | \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> yq e &amp;#39;.status.storedVersions&amp;#39; -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- v1alpha2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- v1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This means that at some point I&amp;rsquo;ve had a &lt;code>v1alpha2&lt;/code> and a &lt;code>v1&lt;/code> version of this
+CRD installed. This does not mean that I&amp;rsquo;ve had instances of each of these, just
+that the CRD definition existed at each of these API versions. For my cluster
+this means I was not very good at updating Cert Manager 😞.&lt;/p>
+&lt;h2 id="fixing-our-crd" >Fixing our CRD
+&lt;span>
+&lt;a href="#fixing-our-crd">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The reason this is &amp;ldquo;broken&amp;rdquo; is that the new version no longer has &lt;code>v1alpha2&lt;/code> in
+it, so Kubernetes is trying to protect us by saying &amp;ldquo;hey man, at some point you
+had &lt;code>v1alpha2&lt;/code> in your cluster, but you&amp;rsquo;re trying to remove it from the CRD!
+This might mean some of your stuff won&amp;rsquo;t work!&amp;rdquo; Thanks &lt;a href="https://www.cncf.io/phippy/">Captain
+Kube&lt;/a>!&lt;/p>
+&lt;p>The process is effectively:&lt;/p>
+&lt;ul>
+&lt;li>verify that we don&amp;rsquo;t have any more of the old Custom Resources
+&lt;ul>
+&lt;li>I performed this validation at the repo level&lt;/li>
+&lt;li>&lt;a href="https://github.com/doitintl/kube-no-trouble#arguments">kubent&lt;/a> is a great
+tool for this and you can use it with CRDs!&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>patch the status to remove the clusters&amp;rsquo; memory of them&lt;/li>
+&lt;li>upgrade the CRD spec to a version that removes the deprecated versions&lt;/li>
+&lt;/ul>
+&lt;p>We can use the &lt;code>patch&lt;/code> operation combined with &lt;code>kube proxy&lt;/code> &lt;a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#upgrade-existing-objects-to-a-new-stored-version">as stated in the
+docs&lt;/a>
+to remove the &lt;code>v1alpha2&lt;/code> CRD &lt;code>storedVersion&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl proxy &amp;amp;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl --header &amp;#34;Content-Type: application/json-patch+json&amp;#34; \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --request PATCH http://localhost:8001/apis/apiextensions.k8s.io/v1/customresourcedefinitions/clusterissuers.cert-manager.io/status \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --data &amp;#39;[{&amp;#34;op&amp;#34;: &amp;#34;replace&amp;#34;, &amp;#34;path&amp;#34;: &amp;#34;/status/storedVersions&amp;#34;, &amp;#34;value&amp;#34;:[&amp;#34;v1&amp;#34;]}]&amp;#39;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This will return the CRD and you should be able to verify it no longer has the
+old &lt;code>storedVersion&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>kubectl get crd clusterissuers.cert-manager.io -o yaml | \
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> yq e &amp;#39;.status.storedVersions&amp;#39; -
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- v1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Awesome, we&amp;rsquo;re ready to rock now and can go sync ArgoCD!&lt;/p></description></item></channel></rss>
